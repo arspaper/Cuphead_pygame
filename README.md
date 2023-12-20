@@ -1,7 +1,5 @@
-# Project Cuphead based on Pygame by Ptitsyn Andrey and Anikin Alexander
+# Cuphead
 
-
-## Cuphead
 <p align="center">
   <img src="https://upload.wikimedia.org/wikipedia/en/e/eb/Cuphead_%28artwork%29.png" alt="Cuphead Logo">
 </p>
@@ -34,3 +32,7 @@ Cuphead представляет собой игру с высоким уров�
 - **main.py** - основной файл для запуска игры.
 - **README.md** - документация с описанием игры, проекта, классов и функций.
 - **requirements.txt** - текстовый документ с необходимыми библиотеками.
+
+## Авторы
+- **arspaper** - Птицын Андрей
+- **FristBox1** - Аникин Александр
