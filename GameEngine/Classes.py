@@ -1,14 +1,13 @@
 import pygame
 
-
 class Board:
     def __init__(self, width, height):
-        self.cell_size = None
         self.width = width
         self.height = height
         self.board = [[0] * width for _ in range(height)]
-        self.offset_top = 10
-        self.offset_left = 10
+        self.left = 10
+        self.top = 10
+        self.cell_size = 30
 
     def set_view(self, left, top, cell_size):
         self.left = left
@@ -16,12 +15,19 @@ class Board:
         self.cell_size = cell_size
 
     def render(self, screen):
-        pygame.draw.rect(screen, "FFFFFF", pygame.Rect(30, 30, 60, 60))
+        for row in range(self.height):
+            for col in range(self.width):
+                x = self.left + col * self.cell_size
+                y = self.top + row * self.cell_size
+                pygame.draw.rect(screen, pygame.Color('white'), (x, y, self.cell_size, self.cell_size), 1)
 
+"""
+pygame.init()
+size = 400, 400
+screen = pygame.display.set_mode(size)
 
-screen = pygame.display.set_mode((800, 800))
+board = Board(12, 12)
 
-board = Board(5, 7)
 running = True
 while running:
     for event in pygame.event.get():
@@ -30,3 +36,9 @@ while running:
     screen.fill((0, 0, 0))
     board.render(screen)
     pygame.display.flip()
+
+pygame.quit()
+"""
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self, game):
