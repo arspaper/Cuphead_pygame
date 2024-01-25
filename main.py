@@ -93,17 +93,17 @@ while running:
             if m.current_transition_index == 15:
                 transition_state = "N"
 
-        if mouse_LMB and m.button_help.input_check(mouse_POS):
+        elif mouse_LMB and m.button_help.input_check(mouse_POS):
             game_state = "H"
             music_state = False
             transition_state = "F"
 
-        if mouse_LMB and m.button_play.input_check(mouse_POS):
+        elif mouse_LMB and m.button_play.input_check(mouse_POS):
             game_state = "L"
             music_state = False
             transition_state = "F"
 
-        if keyboard_ESC:
+        elif keyboard_ESC:
             transition_state = "F"
             game_state = "T"
 
@@ -120,7 +120,10 @@ while running:
             if m.current_transition_index == 15:
                 transition_state = "N"
 
-        if keyboard_ESC:
+        elif mouse_LMB and m.level_b.input_check(mouse_POS):
+            pygame.mixer.Sound.play(m.select_sound)
+
+        elif keyboard_ESC:
             game_state = "M"
             music_state = False
             game_state_last = "L"
@@ -139,7 +142,7 @@ while running:
             if m.current_transition_index == 15:
                 transition_state = "N"
 
-        if keyboard_ESC:
+        elif keyboard_ESC:
             game_state = "M"
             music_state = False
             game_state_last = "H"

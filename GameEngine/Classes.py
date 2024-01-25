@@ -17,6 +17,7 @@ class MainMenu:
     def __init__(self, screen, screen_res, game_state):
         pygame.mixer.music.load("Assets/Sounds/menu_theme.mp3")
         pygame.mixer.music.play()
+        self.select_sound = pygame.mixer.Sound("Assets/Sounds/Effects/select.wav")
 
         self.title_background = pygame.image.load("Assets/Sprites/TitleScreen/Background/title_screen_background.png")
         self.title_background = pygame.transform.scale(self.title_background, screen_res)
