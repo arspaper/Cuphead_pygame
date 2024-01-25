@@ -16,15 +16,17 @@ pygame.display.set_caption("Cuphead")
 pygame.display.set_icon(pygame.image.load("Assets/Sprites/TitleScreen/logo.png"))
 
 
-m = MainMenu(screen, screen_res)
 clock = pygame.time.Clock()
 
 running = True
 
-game_state = "T"  # GAME STATE: T = Title Screen, M = Menu, H = Help, G = Game
+game_state = "T"  # GAME STATE: T = Title Screen, M = Menu, H = Help, L = Level Select, G = Game
 transition_state = "N"  # TRANSITION STATE: None = Nothing, F = Fading, U = Unfading
 game_state_last = None
 quit_check = False
+music_state = True
+
+m = MainMenu(screen, screen_res, game_state)
 
 while running:
     clock.tick(60)
@@ -43,6 +45,13 @@ while running:
                 transition_state = "F"
                 game_state = "M"
                 game_state_last = "T"
+
+    if not music_state:
+        m.music_handler(game_state)
+        music_state = True
+
+    if game_state != "G" or game_state != "L":
+        pass
 
     if game_state == "T":
         screen.fill((0, 0, 0))
@@ -71,8 +80,10 @@ while running:
         if transition_state == "F":
             if game_state_last == "T":
                 m.draw_title()
-            else:
+            elif game_state_last == "H":
                 m.draw_help()
+            elif game_state_last == "L":
+                m.draw_level_menu()
             m.draw_transition_fade()
             if m.current_transition_index == 0:
                 transition_state = "U"
@@ -84,11 +95,36 @@ while running:
 
         if mouse_LMB and m.button_help.input_check(mouse_POS):
             game_state = "H"
+            music_state = False
+            transition_state = "F"
+
+        if mouse_LMB and m.button_play.input_check(mouse_POS):
+            game_state = "L"
+            music_state = False
             transition_state = "F"
 
         if keyboard_ESC:
             transition_state = "F"
             game_state = "T"
+
+    if game_state == "L":
+        m.draw_level_menu()
+        if transition_state == "F":
+            m.draw_menu()
+            m.draw_transition_fade()
+            if m.current_transition_index == 0:
+                transition_state = "U"
+
+        elif transition_state == "U":
+            m.draw_transition_unfade()
+            if m.current_transition_index == 15:
+                transition_state = "N"
+
+        if keyboard_ESC:
+            game_state = "M"
+            music_state = False
+            game_state_last = "L"
+            transition_state = "F"
 
     if game_state == "H":
         m.draw_help()
@@ -105,6 +141,7 @@ while running:
 
         if keyboard_ESC:
             game_state = "M"
+            music_state = False
             game_state_last = "H"
             transition_state = "F"
 

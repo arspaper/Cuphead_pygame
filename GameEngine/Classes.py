@@ -14,7 +14,10 @@ class Button:
 
 
 class MainMenu:
-    def __init__(self, screen, screen_res):
+    def __init__(self, screen, screen_res, game_state):
+        pygame.mixer.music.load("Assets/Sounds/menu_theme.mp3")
+        pygame.mixer.music.play()
+
         self.title_background = pygame.image.load("Assets/Sprites/TitleScreen/Background/title_screen_background.png")
         self.title_background = pygame.transform.scale(self.title_background, screen_res)
 
@@ -37,8 +40,12 @@ class MainMenu:
         self.button_play_pos = (screen_res[0] // 2, screen_res[1] // 2)
         self.button_play = Button(self.button_play_img, self.button_play_pos)
 
-        pygame.mixer.music.load("Assets/Sounds/menu_theme.mp3")
-        pygame.mixer.music.play(-1)
+        self.level_img_b = pygame.image.load("Assets/Sprites/Level_Boards/blueberry.png")
+        self.level_img_b = pygame.transform.scale(self.level_img_b, (screen_res[0] * 0.3, screen_res[0] * 0.3))
+        self.level_b = Button(self.button_play_img, (screen_res[0] // 2, screen_res[1] // 2))
+
+        self.mode = game_state
+
         self.screen = screen
         self.screen_res = screen_res
 
@@ -64,6 +71,20 @@ class MainMenu:
         self.current_transition_index = len(self.transitions) - 1
         self.transition_display_timer = 0
         self.transition_display_duration = 0
+
+    def music_handler(self, mode="N"):
+        pygame.mixer.music.stop()
+        if mode == "N" or mode == "M":
+            pygame.mixer.music.unload()
+            pygame.mixer.music.load("Assets/Sounds/menu_theme.mp3")
+        if mode == "L":
+            pygame.mixer.music.unload()
+            pygame.mixer.music.load("Assets/Sounds/level_board.mp3")
+        if mode == "H":
+            pygame.mixer.music.unload()
+            pygame.mixer.music.load("Assets/Sounds/help.mp3")
+
+        pygame.mixer.music.play(-1)
 
     def update_title(self):
         self.cup_display_timer += 1
@@ -125,4 +146,5 @@ class MainMenu:
                               (self.screen_res[0] - self.help_board.get_size()[0]) // 2))
 
     def draw_level_menu(self):
-        pass
+        self.screen.blit(self.help_background, (0, 0))
+        self.screen.blit(self.level_img_b, self.level_b.rect.topleft)
