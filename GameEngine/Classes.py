@@ -1,44 +1,36 @@
 import pygame
 
-class Board:
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-        self.board = [[0] * width for _ in range(height)]
-        self.left = 10
-        self.top = 10
-        self.cell_size = 30
 
-    def set_view(self, left, top, cell_size):
-        self.left = left
-        self.top = top
-        self.cell_size = cell_size
+class MainMenu:
+    def __init__(self, screen, screen_res):
+        self.title_background = pygame.image.load("Assets/Sprites/TitleScreen/Background/title_screen_background.png")
+        self.title_background = pygame.transform.scale(self.title_background, screen_res)
+        self.screen = screen
+        self.screen_res = screen_res
+        self.title_cups = list()
+        self.cup_res = (int(self.screen_res[0] * 0.67578125), int(self.screen_res[1] * 0.694))
 
-    def render(self, screen):
-        for row in range(self.height):
-            for col in range(self.width):
-                x = self.left + col * self.cell_size
-                y = self.top + row * self.cell_size
-                pygame.draw.rect(screen, pygame.Color('white'), (x, y, self.cell_size, self.cell_size), 1)
+        for i in range(1, 35):  # loading filenames of CUPHEAD and MUGMAN images into title_cups
+            if i < 10:
+                title_cup = pygame.image.load(f"Assets/Sprites/TitleScreen/Cups/cuphead_title_screen_000{i}.png")
+            else:
+                title_cup = pygame.image.load(f"Assets/Sprites/TitleScreen/Cups/cuphead_title_screen_00{i}.png")
 
-"""
-pygame.init()
-size = 400, 400
-screen = pygame.display.set_mode(size)
+            title_cup = pygame.transform.scale(title_cup, self.cup_res)
+            self.title_cups.append(title_cup)
 
-board = Board(12, 12)
+        self.current_cup_index = 0  # current index of cup image
+        self.cup_display_timer = 0  # timer to control how long each cup will be displayed
+        self.cup_display_duration = 5 # display duration
 
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-    screen.fill((0, 0, 0))
-    board.render(screen)
-    pygame.display.flip()
+    def update(self):
+        self.cup_display_timer += 1
+        if self.cup_display_timer >= self.cup_display_duration:
+            self.cup_display_timer = 0
+            self.current_cup_index = (self.current_cup_index + 1) % len(self.title_cups)
 
-pygame.quit()
-"""
-
-class Player(pygame.sprite.Sprite):
-    def __init__(self, game):
+    def draw(self):
+        self.screen.blit(self.title_background, (0, 0))
+        current_cup = self.title_cups[self.current_cup_index]
+        self.screen.blit(current_cup, (((self.screen_res[0] - self.cup_res[0]) // 2), self.screen_res[1] - self.cup_res[1]))
+        pygame.display.update()
