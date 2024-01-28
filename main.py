@@ -120,7 +120,13 @@ while running:
             if m.current_transition_index == 15:
                 transition_state = "N"
 
-        elif mouse_LMB and m.level_b.input_check(mouse_POS):
+        elif mouse_LMB and m.level_b.input_check(mouse_POS):  # BLUEBERRY
+            pygame.mixer.Sound.play(m.select_sound)
+
+        elif mouse_LMB and m.level_f.input_check(mouse_POS):  # FLOWER
+            pygame.mixer.Sound.play(m.select_sound)
+
+        elif mouse_LMB and m.level_fg.input_check(mouse_POS):  # FROGS
             pygame.mixer.Sound.play(m.select_sound)
 
         elif keyboard_ESC:

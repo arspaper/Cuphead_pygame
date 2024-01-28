@@ -42,8 +42,19 @@ class MainMenu:
         self.button_play = Button(self.button_play_img, self.button_play_pos)
 
         self.level_img_b = pygame.image.load("Assets/Sprites/Level_Boards/blueberry.png")
-        self.level_img_b = pygame.transform.scale(self.level_img_b, (screen_res[0] * 0.3, screen_res[0] * 0.3))
-        self.level_b = Button(self.button_play_img, (screen_res[0] // 2, screen_res[1] // 2))
+        self.level_img_b = pygame.transform.scale(self.level_img_b,
+                                                  (screen_res[0] * 0.2, screen_res[0] * 0.2 * 0.726))
+        self.level_b = Button(self.level_img_b, (screen_res[0] // 4, screen_res[1] // 2))
+
+        self.level_img_f = pygame.image.load("Assets/Sprites/Level_Boards/flower.png")
+        self.level_img_f = pygame.transform.scale(self.level_img_f,
+                                                  (screen_res[0] * 0.2, screen_res[0] * 0.2 * 0.726))
+        self.level_f = Button(self.level_img_f, (screen_res[0] // 2, screen_res[1] // 2))
+
+        self.level_img_fg = pygame.image.load("Assets/Sprites/Level_Boards/frogs.png")
+        self.level_img_fg = pygame.transform.scale(self.level_img_fg,
+                                                  (screen_res[0] * 0.2, screen_res[0] * 0.2 * 0.726))
+        self.level_fg = Button(self.level_img_fg, (screen_res[0] // 1.33, screen_res[1] // 2))
 
         self.mode = game_state
 
@@ -149,3 +160,129 @@ class MainMenu:
     def draw_level_menu(self):
         self.screen.blit(self.help_background, (0, 0))
         self.screen.blit(self.level_img_b, self.level_b.rect.topleft)
+        self.screen.blit(self.level_img_f, self.level_f.rect.topleft)
+        self.screen.blit(self.level_img_fg, self.level_fg.rect.topleft)
+
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self, image_paths, position, *groups):
+        super().__init__(*groups)
+
+        self.images = dict()  # images of the player
+        self.images["Idle"] = []
+        self.images["Aim"] = []
+        self.images["Dash_G"] = []
+        self.images["Dash_A"] = []
+        self.images["Hit_G"] = []
+        self.images["Hit_A"] = []
+        self.images["Jump"] = []
+
+        self.images["Death"] = []
+        self.images["HP"] = []
+        self.images["Flex"] = []
+        self.images["Pants"] = []
+
+        self.images_left = dict()  # mirrored images of the player
+        self.images_left["Idle"] = []
+        self.images_left["Aim"] = []
+        self.images_left["Dash_G"] = []
+        self.images_left["Dash_A"] = []
+        self.images_left["Hit_G"] = []
+        self.images_left["Hit_A"] = []
+        self.images_left["Jump"] = []
+
+        for i in range(5):  # IDLE
+            img = pygame.image.load(f"Assets/Sprites/Player/Idle/{i}.png")
+            img_res = img.get_size()
+            img = pygame.transform.scale(img, img_res)
+            self.images["Idle"].append(img)
+            img = pygame.transform.flip(img, True, False)
+            self.images_left["Idle"].append(img)
+
+        for i in range(5):  # AIM
+            img = pygame.image.load(f"Assets/Sprites/Player/Idle/{i}.png")
+            img_res = img.get_size()
+            img = pygame.transform.scale(img, img_res)
+            self.images["Idle"].append(img)
+            img = pygame.transform.flip(img, True, False)
+            self.images_left["Idle"].append(img)
+
+        for i in range(4):  # HEALTH
+            img = pygame.image.load(f"Assets/Sprites/Player/HP/{i}.png")
+            img_res = img.get_size()
+            img = pygame.transform.scale(img, img_res)
+            self.images["HP"].append(img)
+
+        for i in range(8):  # DASH
+            imgA = pygame.image.load(f"Assets/Sprites/Player/Dash/Air/{i}.png")
+            imgG = pygame.image.load(f"Assets/Sprites/Player/Dash/Ground/{i}.png")
+            imgA_res = imgA.get_size()
+            imgG_res = imgG.get_size()
+
+            imgA = pygame.transform.scale(imgA, imgA_res)
+            self.images["Dash_A"].append(imgA)
+            imgA = pygame.transform.flip(imgA, True, False)
+            self.images_left["Dash_A"].append(imgA)
+
+            imgG = pygame.transform.scale(imgG, imgG_res)
+            self.images["Dash_G"].append(imgG)
+            imgG = pygame.transform.flip(imgG, True, False)
+            self.images_left["Dash_G"].append(imgG)
+
+        for i in range(15):  # DEATH
+            img = pygame.image.load(f"Assets/Sprites/Player/Death/{i}.png")
+            img_res = img.get_size()
+            img = pygame.transform.scale(img, img_res)
+            self.images["Death"].append(img)
+
+        for i in range(6):  # HIT
+            imgA = pygame.image.load(f"Assets/Sprites/Player/Hit/Air/{i}.png")
+            imgG = pygame.image.load(f"Assets/Sprites/Player/Hit/Ground/{i}.png")
+            imgA_res = imgA.get_size()
+            imgG_res = imgG.get_size()
+
+            imgA = pygame.transform.scale(imgA, imgA_res)
+            self.images["Hit_A"].append(imgA)
+            imgA = pygame.transform.flip(imgA, True, False)
+            self.images_left["Hit_A"].append(imgA)
+
+            imgG = pygame.transform.scale(imgG, imgG_res)
+            self.images["Hit_G"].append(imgG)
+            imgG = pygame.transform.flip(imgG, True, False)
+            self.images_left["Hit_G"].append(imgG)
+
+        for i in range(46):  # FLEX intro
+            img = pygame.image.load(f"Assets/Sprites/Player/Intros/Flex/{i}.png")
+            img_res = img.get_size()
+            img = pygame.transform.scale(img, img_res)
+            self.images["Flex"].append(img)
+
+        for i in range(28):  # PANTS intro
+            img = pygame.image.load(f"Assets/Sprites/Player/Intros/Pants/{i}.png")
+            img_res = img.get_size()
+            img = pygame.transform.scale(img, img_res)
+            self.images["Pants"].append(img)
+
+        for i in range(5):  # JUMP
+            img = pygame.image.load(f"Assets/Sprites/Player/Jump/{i}.png")
+            img_res = img.get_size()
+            img = pygame.transform.scale(img, img_res)
+            self.images["Jump"].append(img)
+            img = pygame.transform.flip(img, True, False)
+            self.images_left["Jump"].append(img)
+
+
+        self.health = 3
+        self.health_max = 3
+        self.damage = 1
+
+
+class Projectile(pygame.sprite.Sprite):
+    def __init__(self, Player):
+        super.__init__()
+        super().__init__(*groups)
+
+
+class Game:
+    def __init__(self):
+        pass
