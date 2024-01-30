@@ -1,4 +1,6 @@
 import pygame
+import time
+import random
 
 
 class Button:
@@ -164,7 +166,7 @@ class MainMenu:
         self.screen.blit(self.level_img_fg, self.level_fg.rect.topleft)
 
 
-class Player(pygame.sprite.Sprite):
+class Player_Imgs(pygame.sprite.Sprite):
     def __init__(self, image_paths, position, *groups):
         super().__init__(*groups)
 
@@ -271,16 +273,111 @@ class Player(pygame.sprite.Sprite):
             img = pygame.transform.flip(img, True, False)
             self.images_left["Jump"].append(img)
 
-
         self.health = 3
         self.health_max = 3
         self.damage = 1
+        self.all_Projectiles = pygame.sprite.Group()
+        self.attack = 5
+        self.game = Game()
+        self.velocity = 35
+        self.image = pygame.image.load(
+            "./assets/Player/idle/cuphead_idle_0001.png")
+        self.image = pygame.transform.scale(self.image, (10, 10))
+        self.rect = self.image.get_rect()
+        self.rect.x = 100
+        self.rect.y = 370
+        self.pvimgs = []
+        for i in range(0, 4):
+            image = pygame.image.load(
+                f'./assets/Sprites/Player/HP/{i}.png')
+            self.pvimgs.append(image)
+        self.pvimg = self.pvimgs[self.health]
+        self.pvrect = self.pvimg.get_rect()
+        self.pvrect.x = 10
+        self.pvrect.y = 530
+        self.time_last_colistion = time.monotonic() - 4
+        self.Right = True
+        self.is_jumping = False
+        self.jumpGravity = 10
+        self.jump_height = 60
+        self.jump_Velocity = self.jump_height
+
+    def Lancer_Projectile(self):
+        if self.Right:
+            self.all_Projectiles.add(Projectile(self, True))
+        else:
+            self.all_Projectiles.add(Projectile(self, False))
+
+    def moveRight(self):
+        if not self.game.check_collition(self, self.game.all_ennemy):
+            self.rect.x += self.velocity
+            self.Right = True
+
+    def PlayerJump(self):
+        self.rect.y -= self.jump_Velocity
+        self.jump_Velocity -= self.jumpGravity
+        if self.jump_Velocity < - self.jump_height:
+            self.jump_Velocity = self.jump_height
+            self.is_jumping = False
+
+    def moveLeft(self):
+        if not self.game.check_collition(self, self.game.all_ennemy):
+            self.Right = False
+            self.rect.x -= self.velocity
+
 
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, Player):
-        super.__init__()
-        super().__init__(*groups)
+
+    def __init__(self, Player, Right):
+        super().__init__()
+        self.Bullet = []
+        for i in range(1, 8):
+            image = pygame.image.load(
+                f'./assets/Arme/BNorm_{i}.png')
+            image = pygame.transform.scale(image, (50, 20))
+            self.Bullet.append(image)
+
+        self.velocity = random.randint(57, 60)
+        self.Player = Player
+        self.Right = Right
+
+        self.current_frame = 0
+        self.image = pygame.image.load("./assets/Arme/BNorm_1.png")
+        self.image = pygame.transform.scale(self.image, (50, 20))
+        self.rect = self.image.get_rect()
+        if self.Right:
+            self.rect.x = Player.rect.x+70
+        else:
+            self.rect.x = Player.rect.x-45
+            self.image = pygame.transform.flip(self.image, True, False)
+        self.rect.y = Player.rect.y+25+random.randint(1, 20)
+        self.direction = "none"
+
+    def move(self):
+        if self.direction == "none" or self.direction == "Right":
+            self.rect.x += self.velocity
+            self.current_frame = (self.current_frame + 1) % len(self.Bullet)
+            self.image = self.Bullet[self.current_frame]
+            for monster in self.Player.game.check_collition(self, self.Player.game.all_ennemy):
+                self.Player.all_Projectiles.remove(self)
+                monster.damage(self.Player.attack)
+            self.direction = "Right"
+            if self.rect.x > 1024 or self.Player.game.check_collition(self, self.Player.game.all_ennemy):
+                self.Player.all_Projectiles.remove(self)
+
+    def moveLeft(self):
+        if self.direction == "none" or self.direction == "Left":
+            self.rect.x -= self.velocity
+            self.current_frame = (self.current_frame + 1) % len(self.Bullet)
+            self.image = pygame.transform.flip(
+                self.Bullet[self.current_frame], True, False)
+            for monster in self.Player.game.check_collition(self, self.Player.game.all_ennemy):
+                self.Player.all_Projectiles.remove(self)
+                monster.damage(self.Player.attack)
+            if self.rect.x < 0 or self.Player.game.check_collition(self, self.Player.game.all_ennemy):
+                self.Player.all_Projectiles.remove(self)
+            self.direction = "Left"
 
 
 class Game:
