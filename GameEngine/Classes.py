@@ -3,6 +3,9 @@ import time
 import random
 
 
+projectiles = list()
+
+
 class Button:
     def __init__(self, image, pos):
         self.image = image
@@ -55,7 +58,7 @@ class MainMenu:
 
         self.level_img_fg = pygame.image.load("Assets/Sprites/Level_Boards/frogs.png")
         self.level_img_fg = pygame.transform.scale(self.level_img_fg,
-                                                  (screen_res[0] * 0.2, screen_res[0] * 0.2 * 0.726))
+                                                   (screen_res[0] * 0.2, screen_res[0] * 0.2 * 0.726))
         self.level_fg = Button(self.level_img_fg, (screen_res[0] // 1.33, screen_res[1] // 2))
 
         self.mode = game_state
@@ -166,143 +169,157 @@ class MainMenu:
         self.screen.blit(self.level_img_fg, self.level_fg.rect.topleft)
 
 
-class Player_Imgs(pygame.sprite.Sprite):
-    def __init__(self, image_paths, position, *groups):
-        super().__init__(*groups)
+def image_load():
+    idle = list()
+    idle_left = list()
 
-        self.images = dict()  # images of the player
-        self.images["Idle"] = []
-        self.images["Aim"] = []
-        self.images["Dash_G"] = []
-        self.images["Dash_A"] = []
-        self.images["Hit_G"] = []
-        self.images["Hit_A"] = []
-        self.images["Jump"] = []
+    projectiles = list()
 
-        self.images["Death"] = []
-        self.images["HP"] = []
-        self.images["Flex"] = []
-        self.images["Pants"] = []
+    hit = list()
+    hit_left = list()
 
-        self.images_left = dict()  # mirrored images of the player
-        self.images_left["Idle"] = []
-        self.images_left["Aim"] = []
-        self.images_left["Dash_G"] = []
-        self.images_left["Dash_A"] = []
-        self.images_left["Hit_G"] = []
-        self.images_left["Hit_A"] = []
-        self.images_left["Jump"] = []
+    shoot = list()
+    shoot_left = list()
 
-        for i in range(5):  # IDLE
-            img = pygame.image.load(f"Assets/Sprites/Player/Idle/{i}.png")
-            img_res = img.get_size()
-            img = pygame.transform.scale(img, img_res)
-            self.images["Idle"].append(img)
-            img = pygame.transform.flip(img, True, False)
-            self.images_left["Idle"].append(img)
+    run = list()
+    run_left = list()
 
-        for i in range(5):  # AIM
-            img = pygame.image.load(f"Assets/Sprites/Player/Idle/{i}.png")
-            img_res = img.get_size()
-            img = pygame.transform.scale(img, img_res)
-            self.images["Idle"].append(img)
-            img = pygame.transform.flip(img, True, False)
-            self.images_left["Idle"].append(img)
+    jump = list()
+    jump_left = list()
 
+    run_shoot = list()
+    run_shoot_left = list()
+
+    death = list()
+
+    dash = list()
+    dash_left = list()
+
+    intro_p = list()
+    intro_f = list()
+
+    health = list()
+
+    for i in range(5):  # IDLE
+        img = pygame.image.load(f"Assets/Sprites/Player/Idle/{i}.png")
+        img = pygame.transform.scale(img, (65, 95))
+        idle.append(img)
+        img = pygame.transform.flip(img, True, False)
+        idle_left.append(img)
+
+    for i in range(6):  # SHOOT
+        img = pygame.image.load(f"Assets/Sprites/Player/Shoot/{i}.png")
+        img = pygame.transform.scale(img, (85, 95))
+        shoot.append(img)
+        img = pygame.transform.flip(img, True, False)
+        shoot_left.append(img)
+
+    for i in range(16):  # RUN + RUN 'N' SHOOT
+        img = pygame.image.load(f"Assets/Sprites/Player/Run/Normal/{i}.png")
+        img = pygame.transform.scale(img, (85, 95))
+        run.append(img)
+        img = pygame.transform.flip(img, True, False)
+        run_left.append(img)
+
+        img = pygame.image.load(f"Assets/Sprites/Player/Run/Shooting/{i}.png")
+        img = pygame.transform.scale(img, (85, 95))
+        run_shoot.append(img)
+        img = pygame.transform.flip(img, True, False)
+        run_shoot_left.append(img)
+
+    for i in range(5):  # JUMP
+        img = pygame.image.load(f"Assets/Sprites/Player/Jump/{i}.png")
+        img = pygame.transform.scale(img, (65, 75))
+        jump.append(img)
+        img = pygame.transform.flip(img, True, False)
+        jump_left.append(img)
+
+    for i in range(6):  # HIT
+        img = pygame.image.load(f"Assets/Sprites/Player/Hit/{i}.png")
+        img = pygame.transform.scale(img, (85, 95))
+        hit.append(img)
+        img = pygame.transform.flip(img, True, False)
+        hit_left.append(img)
+
+    for i in range(16):  # DEATH
+        img = pygame.image.load(f"Assets/Sprites/Player/Death/{i}.png")
+        img = pygame.transform.scale(img, (85, 95))
+        death.append(img)
+
+    for i in range(46):  # FLEX intro
+        img = pygame.image.load(f"Assets/Sprites/Player/Intros/Flex/{i}.png")
+        img = pygame.transform.scale(img, (85, 95))
+        intro_f.append(img)
+
+    for i in range(28):  # PANTS intro
+        img = pygame.image.load(f"Assets/Sprites/Player/Intros/Pants/{i}.png")
+        img = pygame.transform.scale(img, (85, 95))
+        intro_p.append(img)
+
+    for i in range(7):  # PROJECTILES
+        img = pygame.image.load(f"Assets/Sprites/Projectile/{i}.png")
+        img = pygame.transform.scale(img, (50, 20))
+        projectiles.append(img)
+
+    # for i in range(8):  # DASH
+    #     imgA = pygame.image.load(f"Assets/Sprites/Player/Dash/Air/{i}.png")
+    #     imgG = pygame.image.load(f"Assets/Sprites/Player/Dash/Ground/{i}.png")
+    #     imgA_res = imgA.get_size()
+    #     imgG_res = imgG.get_size()
+    #
+    #     imgA = pygame.transform.scale(imgA, imgA_res)
+    #     self.images["Dash_A"].append(imgA)
+    #     imgA = pygame.transform.flip(imgA, True, False)
+    #     self.images_left["Dash_A"].append(imgA)
+    #
+    #     imgG = pygame.transform.scale(imgG, imgG_res)
+    #     self.images["Dash_G"].append(imgG)
+    #     imgG = pygame.transform.flip(imgG, True, False)
+    #     self.images_left["Dash_G"].append(imgG)
+
+    f_idle = 0
+    f_shoot = 0
+    f_jump = 0
+    f_run = 0
+    f_run_shoot = 0
+    f_hit = 0
+    #  TODO: REARRANGE THIS BULLSHIT
+    return (idle, idle_left, shoot, shoot_left, run, run_left, f_idle, f_shoot, f_run, f_run_shoot, jump, jump_left,
+            f_jump, f_run_shoot, run_shoot, run_shoot_left, f_hit, hit)
+
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self, game):
+        super().__init__()
+        self.health_huds = list()
         for i in range(4):  # HEALTH
             img = pygame.image.load(f"Assets/Sprites/Player/HP/{i}.png")
-            img_res = img.get_size()
-            img = pygame.transform.scale(img, img_res)
-            self.images["HP"].append(img)
-
-        for i in range(8):  # DASH
-            imgA = pygame.image.load(f"Assets/Sprites/Player/Dash/Air/{i}.png")
-            imgG = pygame.image.load(f"Assets/Sprites/Player/Dash/Ground/{i}.png")
-            imgA_res = imgA.get_size()
-            imgG_res = imgG.get_size()
-
-            imgA = pygame.transform.scale(imgA, imgA_res)
-            self.images["Dash_A"].append(imgA)
-            imgA = pygame.transform.flip(imgA, True, False)
-            self.images_left["Dash_A"].append(imgA)
-
-            imgG = pygame.transform.scale(imgG, imgG_res)
-            self.images["Dash_G"].append(imgG)
-            imgG = pygame.transform.flip(imgG, True, False)
-            self.images_left["Dash_G"].append(imgG)
-
-        for i in range(15):  # DEATH
-            img = pygame.image.load(f"Assets/Sprites/Player/Death/{i}.png")
-            img_res = img.get_size()
-            img = pygame.transform.scale(img, img_res)
-            self.images["Death"].append(img)
-
-        for i in range(6):  # HIT
-            imgA = pygame.image.load(f"Assets/Sprites/Player/Hit/Air/{i}.png")
-            imgG = pygame.image.load(f"Assets/Sprites/Player/Hit/Ground/{i}.png")
-            imgA_res = imgA.get_size()
-            imgG_res = imgG.get_size()
-
-            imgA = pygame.transform.scale(imgA, imgA_res)
-            self.images["Hit_A"].append(imgA)
-            imgA = pygame.transform.flip(imgA, True, False)
-            self.images_left["Hit_A"].append(imgA)
-
-            imgG = pygame.transform.scale(imgG, imgG_res)
-            self.images["Hit_G"].append(imgG)
-            imgG = pygame.transform.flip(imgG, True, False)
-            self.images_left["Hit_G"].append(imgG)
-
-        for i in range(46):  # FLEX intro
-            img = pygame.image.load(f"Assets/Sprites/Player/Intros/Flex/{i}.png")
-            img_res = img.get_size()
-            img = pygame.transform.scale(img, img_res)
-            self.images["Flex"].append(img)
-
-        for i in range(28):  # PANTS intro
-            img = pygame.image.load(f"Assets/Sprites/Player/Intros/Pants/{i}.png")
-            img_res = img.get_size()
-            img = pygame.transform.scale(img, img_res)
-            self.images["Pants"].append(img)
-
-        for i in range(5):  # JUMP
-            img = pygame.image.load(f"Assets/Sprites/Player/Jump/{i}.png")
-            img_res = img.get_size()
-            img = pygame.transform.scale(img, img_res)
-            self.images["Jump"].append(img)
-            img = pygame.transform.flip(img, True, False)
-            self.images_left["Jump"].append(img)
-
+            self.health_huds.append(img)
         self.health = 3
         self.health_max = 3
         self.damage = 1
-        self.all_Projectiles = pygame.sprite.Group()
+        self.all_projectiles = pygame.sprite.Group()
         self.attack = 5
         self.game = Game()
         self.velocity = 35
         self.image = pygame.image.load(
-            "./assets/Player/idle/cuphead_idle_0001.png")
+            "Assets/Sprites/Player/Idle/0.png")
         self.image = pygame.transform.scale(self.image, (10, 10))
         self.rect = self.image.get_rect()
         self.rect.x = 100
         self.rect.y = 370
-        self.pvimgs = []
-        for i in range(0, 4):
-            image = pygame.image.load(
-                f'./assets/Sprites/Player/HP/{i}.png')
-            self.pvimgs.append(image)
-        self.pvimg = self.pvimgs[self.health]
-        self.pvrect = self.pvimg.get_rect()
-        self.pvrect.x = 10
-        self.pvrect.y = 530
+        self.health_hud = self.health_huds[self.health]
+        self.health_hud_rect = self.health_hud.get_rect()
+        self.health_hud.x = 10
+        self.health_hud.y = 530
         self.time_last_colistion = time.monotonic() - 4
-        self.Right = True
-        self.is_jumping = False
-        self.jumpGravity = 10
+        self.facing = True
+        self.jump_state = False
+        self.jump_gravity = 10
         self.jump_height = 60
-        self.jump_Velocity = self.jump_height
+        self.jump_velocity = self.jump_height
 
-    def Lancer_Projectile(self):
+    def spawn_projectile(self):
         if self.Right:
             self.all_Projectiles.add(Projectile(self, True))
         else:
@@ -326,48 +343,40 @@ class Player_Imgs(pygame.sprite.Sprite):
             self.rect.x -= self.velocity
 
 
-
 class Projectile(pygame.sprite.Sprite):
-
-    def __init__(self, Player, Right):
+    def __init__(self, player, facing_right):
         super().__init__()
-        self.Bullet = []
-        for i in range(1, 8):
-            image = pygame.image.load(
-                f'./assets/Arme/BNorm_{i}.png')
-            image = pygame.transform.scale(image, (50, 20))
-            self.Bullet.append(image)
 
-        self.velocity = random.randint(57, 60)
-        self.Player = Player
-        self.Right = Right
+        self.velocity = 50
+        self.player = player
+        self.facing_right = facing_right
 
         self.current_frame = 0
-        self.image = pygame.image.load("./assets/Arme/BNorm_1.png")
+        self.image = pygame.image.load("Assets/Sprites/Projectile/0.png")
         self.image = pygame.transform.scale(self.image, (50, 20))
         self.rect = self.image.get_rect()
-        if self.Right:
-            self.rect.x = Player.rect.x+70
+        if self.facing_right:
+            self.rect.x = player.rect.x + 70
         else:
-            self.rect.x = Player.rect.x-45
+            self.rect.x = player.rect.x - 45
             self.image = pygame.transform.flip(self.image, True, False)
-        self.rect.y = Player.rect.y+25+random.randint(1, 20)
-        self.direction = "none"
+        self.rect.y = player.rect.y + 25 + random.randint(1, 20)
+        self.direction = 0  # 0 = None, 1 = Right, 2 = Left
 
     def move(self):
-        if self.direction == "none" or self.direction == "Right":
+        if self.direction == 0 or self.direction == 1:
             self.rect.x += self.velocity
-            self.current_frame = (self.current_frame + 1) % len(self.Bullet)
-            self.image = self.Bullet[self.current_frame]
+            self.current_frame = (self.current_frame + 1) % len(projectiles)
+            self.image = projectiles[self.current_frame]
             for monster in self.Player.game.check_collition(self, self.Player.game.all_ennemy):
                 self.Player.all_Projectiles.remove(self)
                 monster.damage(self.Player.attack)
-            self.direction = "Right"
+            self.direction = 1
             if self.rect.x > 1024 or self.Player.game.check_collition(self, self.Player.game.all_ennemy):
                 self.Player.all_Projectiles.remove(self)
 
-    def moveLeft(self):
-        if self.direction == "none" or self.direction == "Left":
+    def move_left(self):
+        if self.direction == 0 or self.direction == 2:
             self.rect.x -= self.velocity
             self.current_frame = (self.current_frame + 1) % len(self.Bullet)
             self.image = pygame.transform.flip(
@@ -383,3 +392,102 @@ class Projectile(pygame.sprite.Sprite):
 class Game:
     def __init__(self):
         pass
+
+
+class Game:
+    def __init__(self):
+        self.all_player = pygame.sprite.Group()
+        self.Player = Player(self)
+        self.all_player.add(self.Player)
+
+        self.son = pygame.mixer.Sound(
+            './assets/son/Cuphead-Menu-Original-Theme-Song.mp3')
+
+        # groupe de monstre
+        self.all_ennemy = pygame.sprite.Group()
+        self.pressed = {}
+        self.is_Playing = False
+
+    def game_start(self):
+        self.spawn_Ennemy(flowergunt)
+        self.spawn_Ennemy(flowergunt)
+
+        # self.spawn_Ennemy()
+        self.is_Playing = True
+
+    def game_over(self):
+        self.all_ennemy = pygame.sprite.Group()
+        self.Player.health = self.Player.max_health
+        self.son.play(loops=-1)
+        self.fpsTitle = 0
+        self.is_Playing = False
+
+    def update(self, game, screen, player_idle, player_idleLeft, player_idleRight, Shoot, ShootLeft, run, runRev, current_frame, current_frame_Shoot, current_frame_run):
+        # game.Player.update_health_bar(screen)
+        screen.blit(game.Player.pvimg, game.Player.pvrect)
+
+        # Pour Courire vers la droite
+        if game.pressed.get(pygame.K_RIGHT) and not game.pressed.get(pygame.K_LEFT):
+            screen.blit(run[current_frame_run], game.Player.rect)
+            current_frame_run = (current_frame_run + 1) % len(run)
+            player_idle = player_idleRight
+            if game.Player.rect.x < 880:
+                game.Player.moveRight()
+
+            # Pour Courire vers la Gauche
+        if game.pressed.get(pygame.K_LEFT) and not game.pressed.get(pygame.K_RIGHT):
+            screen.blit(runRev[current_frame_run], game.Player.rect)
+            current_frame_run = (current_frame_run + 1) % len(runRev)
+            player_idle = player_idleLeft
+            if game.Player.rect.x > 60:
+                game.Player.moveLeft()
+        # On definit si le projectile vas ver la droite ou vers la gauche
+        for projectile in game.Player.all_Projectiles:
+            if Projectile.direction == "none":
+                if player_idle == player_idleRight:
+
+                    projectile.move()
+                else:
+                    projectile.moveLeft()
+            elif Projectile.direction == "Right":
+                projectile.move()
+            elif Projectile.direction == "Left":
+                projectile.moveLeft()
+
+        # Lancer Projectile et Animation Idle du player
+        if game.pressed.get(pygame.K_z):
+            # Lancer le projectile
+            game.Player.Lancer_Projectile()
+            # idle vers la gauche
+            if player_idle == player_idleLeft:
+                tmp = pygame.transform.flip(
+                    Shoot[current_frame_Shoot], True, False)
+                screen.blit(tmp, game.Player.rect)
+                current_frame_Shoot = (current_frame_Shoot + 1) % len(Shoot)
+            # idle vers la droite
+            else:
+                screen.blit(Shoot[current_frame_Shoot], game.Player.rect)
+                current_frame_Shoot = (current_frame_Shoot + 1) % len(Shoot)
+            # recuperer les projectile du joueur
+
+        elif (not game.pressed.get(pygame.K_RIGHT) and not game.pressed.get(pygame.K_LEFT)) or (game.pressed.get(pygame.K_RIGHT) and game.pressed.get(pygame.K_LEFT)):
+            game.Player.image = player_idle[current_frame]
+            screen.blit(game.Player.image, game.Player.rect)
+            current_frame = (current_frame + 1) % len(player_idle)
+
+        for monster in game.all_ennemy:
+            monster.forward()
+            # monster.update_health_bar(screen)
+
+        game.Player.all_Projectiles.draw(screen)
+
+        # appliquer l'ensemble des image de mon groupe d'enemy
+        game.all_ennemy.draw(screen)
+        pygame.time.wait(70)
+
+    def spawn_Ennemy(self, Ennemy_class_name):
+        ennemy = Ennemy_class_name(self)
+        self.all_ennemy.add(ennemy)
+
+    def check_collition(self, sprite, group):
+        return pygame.sprite.spritecollide(sprite, group, False, pygame.sprite.collide_mask)

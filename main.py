@@ -1,5 +1,5 @@
 import pygame
-from GameEngine.Classes import MainMenu
+from GameEngine.Classes import MainMenu, image_load
 
 pygame.init()
 
@@ -25,6 +25,7 @@ transition_state = "N"  # TRANSITION STATE: None = Nothing, F = Fading, U = Unfa
 game_state_last = None
 quit_check = False
 music_state = True
+image_load()
 
 m = MainMenu(screen, screen_res, game_state)
 
