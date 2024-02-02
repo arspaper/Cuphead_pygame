@@ -409,8 +409,8 @@ class Game:
         self.is_Playing = False
 
     def game_start(self):
-        self.spawn_Ennemy(flowergunt)
-        self.spawn_Ennemy(flowergunt)
+        # self.spawn_Ennemy(flowergunt)
+        # self.spawn_Ennemy(flowergunt)
 
         # self.spawn_Ennemy()
         self.is_Playing = True
