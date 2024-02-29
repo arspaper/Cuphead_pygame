@@ -1,4 +1,4 @@
-# Cuphead
+# Cuphead (Menu Only)
 
 <p align="center">
   <img src="https://upload.wikimedia.org/wikipedia/en/e/eb/Cuphead_%28artwork%29.png" alt="Cuphead Logo">
